@@ -1,0 +1,240 @@
+-A
+a graph is an infinite sequence of trees ??
+go the oppiste way
+do not try and represent the tree as a subsut of the graph,
+try to represent the graph as a function of its set of trees
+-B
+Ie
+
+{ A } === A
+{ A, A -> B, B} === A -> B
+{ A, A -> B, A -> C, B. C} === C
+{ A, A -> B, B, B -> A, ... }
+
+-C
+how do you describe an infinite set of trees,
+links and nodes (derp)?
+
+{ A } === { A }, {}
+{ A, A -> B, B, B -> A, ... } === { A, B }, {(A, B), (B, A) }
+
+...
+-D
+okay so how do we derive an immutable tree from a set of node and a set of links
+in such a way that than we get referential equality without memoization??
+
+ie f(nodes, links, query) passes referential equality if the underlying graph
+changes but f(nodes, links, query) does not change (without memoization)!!
+
+consider changes separately
+
+1. links constant
+i. query starts with one node
+a. hold the node (=== is okay)
+
+-E
+
+ok... if we are lazy, then we must memoize (this is obvious), the trees are
+infinite, so we must be lazy so memoisiation will happen.
+
+BUT, each node only need memoize one step out!!!
+
+ok!
+
+1. links constant
+i. query starts with one node
+a. hold the node (=== is okay)
+b. select on links,
+c. check cache
+d. x) create new tree, y) use cache
+
+okay, so it is imposible for invalidata that cache from a child node..
+
+(btw no timetravel)
+
+okay, so a node (mutable) holds an immutable node
+okay, so lets call there nodes and constNodes
+lets also call a tree (only one deep) a stub
+
+we run our query,
+x) no cache, we create a new stub, this is a node with an array of children,
+each child is a node ref and a constNode ref
+-- { *node: *constNode }
+y) cache for that query, we check each node in child array, cached constNode
+against what that node holds
+yx) no changes return prev stub
+yy) create a new stub
+-F
+okay going one deeper
+x -> y -> z
+x.link.link??
+x = x
+x.link = (x, [(y, y*)])
+x.link.link = (x, [(y, yx)].link)
+            = (x, [(y, yx).link])
+no links on constNodes (only nodes)
+            = (x, [y.link, y*])
+            = (x, [(y, [(z, z*)]), y*])
+hmm, this is wrong. y is changing but we are looking for changes on y*
+immutability lives on the const (*). not the node
+
+-G
+x = x*
+x.link = (x, [y*])
+x.link.link = (x, [y*.link])
+
+y*.link ?
+with req that links are unchanged
+y*.link = y.link
+so
+x.link.link = (x, [[z*]])
+calling .link.link .a.b
+x.a.b = (x, [[z*]])
+we cache
+x.a.b
+check [[z*]] === [[z*]] (hmm we want z.z* === z.z*)
+
+okay maybe was correct in -F. we were holding everything we needed there
+-G
+take x.a = (x, [(y, y*1)]) = x1
+we go again
+x.a  a is in x's cache
+take x1
+check y*1 === y.y*
+ok, return x1
+
+mutate y
+x.a  a is in x's cache
+take x1
+check y*1 === y.y*
+not ok
+invalidate a ( in x )
+take x.a = (x, [(y, y*2)]) = x2
+return x2
+
+
+ok again x.a.b
+x.a.b = (x, [(y, y*1)]).b
+
+ok so we are now looking at (y, y*1).b
+we will not be able to inspect for changes until we do another step
+so since y*1 will not be apart of
+-H
+ok circles now I know.
+
+say some x
+x*.a = x.a (constNode will hold link to its mutable parent (ugh!))
+
+
+so x.a = (x, [y*1])
+x.a.b = (x, [[z*1]])
+
+change x
+first check fails, invalidate cache
+
+or
+change y
+x ok
+x.a = (x, [y2*])
+comp to y1*, invalidate cache
+
+change z
+x.a = (x, [y1*]) ok
+x.a.b = (x, [z2*]), invalidate cache.
+
+
+So things seem good. Let represent things properly
+
+{NODE | NODE* | CACHE}
+where CACHE = {[LINK] -> NODE*}
+
+
+graph
+
+  a    b
+x -> y -> z
+
+we start with
+[{x | x1* | {}}, {y | y1* | {}}, {z | z1* | {}}]
+
+get x.a.b
+[{x | x1* | {[a, b] -> z1*}}, {y | y1* | {}}, {z | z1* | {}}]
+return z1*
+
+get x.a.b
+[{x | x1* | {[a, b] -> z1*}}, {y | y1* | {}}, {z | z1* | {}}]
+1. cache exists
+2. find
+
+wait, so all we need to do
+1. on a node, memoize selector -> output
+shallow equallity on the output array
+
+but we can do memoization on each step (thats something right?)
+then the space needed to memoize ~ N(nodes*connectivity^2), this is better than
+worst case would be N(nodes*connectivity!). connectivity may not grow with nodes
+so this is not defo a no go?
+
+okay
+
+we start with
+[{x | x1* | {}}, {y | y1* | {}}, {z | z1* | {}}]
+
+get x.a.b
+[{x | x1* | {[a, b] -> (y1*, y.b)}}, {y | y1* | {[b] -> z1*}}, {z | z1* | {}}]
+return z1*
+
+change y
+get x.a.b
+causes invalidation (y cache delete on mutation,
+[a, b] -> (y1*, y.b)} deleted on check y.y* === y1*)
+[{x | x1* | {}, {y | y2* | {}, {z | z1* | {}}]
+[{x | x1* | {[a, b] -> (y2*, y.b)}}, {y | y2* | {[b] -> z1*}}, {z | z1* | {}}]
+return z1* I think this is okay
+
+we are looking at extracting immutable trees from graphs
+
+so
+   a    b
+(x -> y -> z)(x.a.b) !== (x -> y' -> z)(x.a.b)
+
+so above although z* is same end node the selection object holding it will be
+new. this is okay
+
+finally
+
+we start with
+[{x | x1* | {}}, {y | y1* | {}}, {z | z1* | {}}]
+
+get x.a.b
+[{x | x1* | {[a, b] -> (y1*, y.b)}}, {y | y1* | {[b] -> z1*}}, {z | z1* | {}}]
+return z1*
+
+change z
+get x.a.b
+// causes invalidation (y cache delete on mutation,
+// [a, b] -> (y1*, y.b)} deleted on check y.y* === y1*)
+// [{x | x1* | {}, {y | y1* | {}, {z | z2* | {}}]
+// [{x | x1* | {[a, b] -> (y1*, y.b)}}, {y | y1* | {[b] -> z1*}}, {z | z1* | {}}]
+
+
+ok so
+(get next node)
+1. check cache for selector
+a - exists)
+  i. check constnode ref (maybe we only need to do this on final node)
+    a - changed)
+      i. invalidate
+      ii. go to 1
+    b - not changed)
+      i. go to 1.a.ii
+  ii. get next link
+  iii. check for change
+    a - changed)
+      i. invalidata
+      ii. go to 1
+    b - not changed)
+      i return
+b) create new
+
+so we should prob move 1.a.i into top level!s
