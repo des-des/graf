@@ -59,7 +59,8 @@ test('cNode, change label', t => {
 test('link', t => {
   const n1 = cNode('n1')
   const n2 = cNode('n2', [['link', n1]])
-  const linkedNodes = n2.query('link')
+  const linkedNodes = n2.query(['link'])
+
   t.equal(linkedNodes.length, 1, 'correct number of nodes returned')
 
   const linkedNode = linkedNodes[0]
@@ -67,6 +68,7 @@ test('link', t => {
 
   linkedNodes[0] = 'eoin'
   t.equal(linkedNodes[0], n1, 'link array cannot be changed')
+  t.equal(linkedNode.getLabel(), 'n1', 'can get label of link')
 
   t.end()
 })
@@ -79,8 +81,9 @@ test('adding links', t => {
   const n4 = n3.addLink(['link', n1])
 
   t.notEqual(n4, n3, 'adding link creates new node')
-  t.equal(n3.query('link').length, 0, 'old node does not have new link')
-  t.equal(n4.query('link')[0].getLabel(), 'n1', 'new node has correct link')
+
+  t.equal(n3.query(['link']).length, 0, 'old node does not have new link')
+  t.equal(n4.query(['link'])[0].getLabel(), 'n1', 'new node has correct link')
 
   t.end()
 })
@@ -92,7 +95,7 @@ test('chaining queries', t => {
   const n4 = cNode('n3', [['connection', n3]])
 
   t.deepEqual(
-    n4.query('connection', 'link').map(l => l.getLabel()),
+    n4.query(['connection', 'link']).map(l => l.getLabel()),
     ['n2', 'n1'],
     'seems good'
   );
