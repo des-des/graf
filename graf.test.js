@@ -16,15 +16,15 @@ test('momoizer', t => {
 
 test('iArray', t => {
   t.equal(iArray([]).length, 0, 'empty iArray has zero length')
-  const three = iArray([1, 2, 3]);
+  const three = iArray([1, 2, 3])
 
-  t.equal(three.length, 3, 'length set correctly for longer array');
+  t.equal(three.length, 3, 'length set correctly for longer array')
   t.equal(three[1], 2, 'getter works as expected')
 
-  three[0] = 0;
+  three[0] = 0
   t.equal(three[0], 1, 'set index does not change i array')
 
-  const four = three.append(4);
+  const four = three.append(4)
 
   t.notEqual(three, four, 'append return new iArray')
   t.equal(three[3], undefined, 'and does not change original')
@@ -34,7 +34,7 @@ test('iArray', t => {
 })
 
 test('flatMap', t => {
-  const inIArray = x => iArray([x]);
+  const inIArray = x => iArray([x])
   t.equal(flatMap(inIArray)([1, 2])[1], 2, 'returns flat array')
   t.end()
 })
@@ -98,7 +98,7 @@ test('chaining queries', t => {
     n4.query(['connection', 'link']).map(l => l.getLabel()),
     ['n2', 'n1'],
     'seems good'
-  );
+  )
 
   t.end()
 })
@@ -110,7 +110,7 @@ test('node', t => {
   const n2 = node('n2')
   const n3 = n2.addLink(['link', n1])
 
-  t.equal(n2, n3, 'node container does not create new instance');
+  t.equal(n2, n3, 'node container does not create new instance')
 
   t.end()
 })
@@ -180,7 +180,7 @@ test('bigger test', t => {
     'bigger query returns correct result'
   )
   const q2 = n5.query(['l1', 'l2', 'l1'])
-  t.equal(q1, q2, 'query remembered');
+  t.equal(q1, q2, 'query remembered')
 
   n2.setLabel('n2_')
   t.equal(q1[0].getLabel(), 'n2', 'query holds value')
