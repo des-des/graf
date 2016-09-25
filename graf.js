@@ -1,9 +1,8 @@
 let DEBUG = true
 DEBUG = false
 /* istanbul ignore next */
-const show = (...args) => { if (DEBUG) console.log(...args) };
+const show = (...args) => { if (DEBUG) console.log(...args) }
 
-////////////////////////////////////////////////////////////////////////////////
 const mem = f => {
   let cacheArg, cacheReturn
   return arg => {
@@ -15,7 +14,6 @@ const mem = f => {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
 const iArray = arr => Object.create(
   {
     append: (...elems) => iArray([...arr, ...elems]),
@@ -23,7 +21,7 @@ const iArray = arr => Object.create(
     map: f => iArray(arr.map(f)),
     one: pred => {
       let i = 0
-      while(i < arr.length) {
+      while (i < arr.length) {
         if (pred(arr[i], i)) return true
         i += 1
       }
@@ -37,11 +35,10 @@ const iArray = arr => Object.create(
       enumerable: true,
       get: () => arr[index]
     }
-    return props;
+    return props
   }, { length: { value: arr.length }, mut: { value: [...arr] } })
 ) // this will be better.
 
-////////////////////////////////////////////////////////////////////////////////
 const addLinkToBins = (links, [tag, node]) =>
   links.set(tag, (links.get(tag) || iArray([])).append(node))
 
@@ -67,9 +64,9 @@ const cNode = (label, links = []) => {
       if (tags.length === 0) {
         return self.iArray(self)
       }
-      const key = JSON.stringify(tags);
+      const key = JSON.stringify(tags)
       const cachedResult = cache.get(key)
-      const step = self.step(tags[0]);
+      const step = self.step(tags[0])
       const currentResult =
         flatMap(node => node.query(tags.slice(1)))(step)
 
@@ -81,7 +78,6 @@ const cNode = (label, links = []) => {
       const hasChanged =
         cachedResult.one((cachedNode, i) => cachedNode !== currentResult[i])
 
-      show({ hasChanged });
       if (hasChanged) {
         cache.set(key, currentResult)
         return currentResult
@@ -96,7 +92,7 @@ const node = (label, links) => {
   let cNode_ = cNode(label, links)
   return Object.keys(cNode_).reduce((node, key) => {
     node[key] = (...args) => {
-      const res = cNode_[key](...args);
+      const res = cNode_[key](...args)
       if (res.isCNode) {
         cNode_ = res
         return node

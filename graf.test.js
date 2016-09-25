@@ -76,14 +76,13 @@ test('link', t => {
 test('adding links', t => {
   const n1 = cNode('n1')
   const n2 = cNode('n2')
-  const n3 = cNode('n3')
 
-  const n4 = n3.addLink(['link', n1])
+  const n3 = n2.addLink(['link', n1])
 
-  t.notEqual(n4, n3, 'adding link creates new node')
+  t.notEqual(n3, n2, 'adding link creates new node')
 
-  t.equal(n3.query(['link']).length, 0, 'old node does not have new link')
-  t.equal(n4.query(['link'])[0].getLabel(), 'n1', 'new node has correct link')
+  t.equal(n2.query(['link']).length, 0, 'old node does not have new link')
+  t.equal(n3.query(['link'])[0].getLabel(), 'n1', 'new node has correct link')
 
   t.end()
 })
