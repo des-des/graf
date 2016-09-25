@@ -48,11 +48,8 @@ const addLinkToBins = (links, [tag, node]) =>
 const buildLinkMap = links => links.reduce(addLinkToBins, new Map())
 
 const flatMap = f => xs => xs.reduce((flat, x) => flat.concat(f(x)), iArray([]))
-const queryStep = tag => flatMap(cNode => cNode.step(tag))
 
 const getId = ((id) => () => (id++).toString())(0)
-
-const inIArray = () => mem()
 
 const cNode = (label, links = []) => {
   const linkMap = buildLinkMap(links)
