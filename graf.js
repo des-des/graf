@@ -1,7 +1,8 @@
 let DEBUG = true
 DEBUG = false
-/* istanbul ignore next */
+/* istanbul ignore next */ /* eslint-disable */
 const show = (...args) => { if (DEBUG) console.log(...args) }
+/* eslint-enable */
 
 const mem = f => {
   let cacheArg, cacheReturn

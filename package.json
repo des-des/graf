@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "cover": "./node_modules/.bin/istanbul cover graf.test.js",
-    "test": "node graf.test.js | tap-notify | tap-spec",
-    "test:watch": "nodemon -q -w graf.js -w graf.test.js -x \"npm run test\"",
-    "cover:watch": "nodemon -q -w graf.js -w graf.test.js -x \"npm run test\"",
-    "standard": "standard"
+    "check-coverage": "./node_modules/.bin/istanbul check-coverage",
+    "test": "standard && npm run cover && npm run check-coverage",
+    "test-only": "node graf.test.js | tap-notify | tap-spec",
+    "test:dev": "nodemon -q -w graf.js -w graf.test.js -x \"npm run test-only\""
   },
   "keywords": [],
   "author": "",
