@@ -4,9 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/istanbul cover graf.test.js | tap-notify | tap-spec",
+    "test:watch": "nodemon -q -w graf.js -w graf.test.js -x \"npm run test\""
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "tap-notify": "^1.0.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.0"
+  }
 }
