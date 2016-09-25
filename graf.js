@@ -52,7 +52,7 @@ const cNode = (label, links = []) => {
     setLabel: label => cNode(label, links),
     getLabel: () => label,
     step: tag => linkMap.get(tag) || iArray([]),
-    query: (tags, expected) => {
+    query: tags => {
       if (tags.length === 0) return iArray([self])
 
       const cachedResult = cache.get(tags)

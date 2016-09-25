@@ -104,7 +104,21 @@ test('chaining queries', t => {
 })
 
 test('node', t => {
-  const n = node('n');
-  t.equal(n.getLabel(), 'n', 'seems to work')
+  const n1 = node('n1')
+  t.equal(n1.getLabel(), 'n1', 'node accesses underlying cNodes getters')
+
+  const n2 = node('n2')
+  const n3 = n2.addLink(['link', n1])
+
+  t.equal(n2, n3, 'node container does not create new instance');
+  t.equal(n3.query(['link'])[0].getLabel(), 'n1', 'link works on container')
+
+  n1.setLabel('x')
+  t.equal(
+    n3.query(['link'])[0].getLabel(),
+    'x',
+    'link works on to changing underlying cNode'
+  );
+
   t.end()
 })
