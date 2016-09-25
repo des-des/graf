@@ -1,4 +1,6 @@
-const show = (...args) => { if (process.env.DEBUG) console.log(...args) };
+let DEBUG = true
+DEBUG = false
+const show = (...args) => { if (DEBUG) console.log(...args) };
 
 ////////////////////////////////////////////////////////////////////////////////
 const mem = f => {
