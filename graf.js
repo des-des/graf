@@ -22,7 +22,11 @@ const iArray = arr => Object.create(
     map: f => iArray(arr.map(f)),
     one: pred => {
       let i = 0
-      while(i++ < arr.length) if (pred(arr[i], i)) return true
+      while(i < arr.length) {
+        if (pred(arr[i], i)) return true
+        i += 1
+      }
+      return false
     },
     reduce: arr.reduce,
     isIArray: true
