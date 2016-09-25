@@ -77,6 +77,17 @@ const cNode = (label, links = []) => {
   return self
 }
 
+const node = (label, links) => {
+  let cNode_ = cNode(label, links)
+  return Object.keys(cNode).reduce((node, key) => {
+    node[k] = (...args) => {
+      cNode_ = cNode[key](...args)
+      return node
+    }
+    return node
+  })
+}
+
 module.exports = {
   iArray,
   flatMap,
