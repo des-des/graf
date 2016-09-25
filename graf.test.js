@@ -111,14 +111,83 @@ test('node', t => {
   const n3 = n2.addLink(['link', n1])
 
   t.equal(n2, n3, 'node container does not create new instance');
-  t.equal(n3.query(['link'])[0].getLabel(), 'n1', 'link works on container')
+
+  t.end()
+})
+
+test('node, change underlying', t => {
+  const n1 = node('n1')
+  t.equal(n1.getLabel(), 'n1', 'node accesses underlying cNodes getters')
+
+  const n2 = node('n2')
+  const n3 = n2.addLink(['link', n1])
 
   n1.setLabel('x')
   t.equal(
     n3.query(['link'])[0].getLabel(),
     'x',
     'link works on to changing underlying cNode'
-  );
+  )
+
+  t.end()
+})
+
+test('caching, repeat query', t => {
+  const n1 = node('n1')
+  const n2 = node('n2', [['n1Link', n1]])
+  const n3 = node('n3', [['n2Link', n2]])
+
+  const q1 = n3.query(['n2Link', 'n1Link'])
+  const q2 = n3.query(['n2Link', 'n1Link'])
+
+  t.equal(q1, q2, 'same query on same graph returns same object')
+  t.end()
+})
+
+test('caching, with change', t => {
+  const n1 = node('n1')
+  const n2 = node('n2', [['n1Link', n1]])
+
+  const q1 = n2.query(['n1Link'])
+  n1.setLabel('x')
+  const q2 = n2.query(['n1Link'])
+
+  t.notEqual(q1, q2, 'same query on different graph returns different object')
+
+  t.equal(q1[0].getLabel(), 'n1', 'first query holds its result')
+  t.equal(q2[0].getLabel(), 'x', 'second query correct')
+  t.end()
+})
+
+test('bigger test', t => {
+  const n1 = node('n1')
+  const n2 = node('n2')
+  const n3 = node('n3')
+  const n4 = node('n4')
+  const n5 = node('n5')
+
+  n2.addLink(['l1', n1])
+  n3.addLink(['l1', n2])
+  n3.addLink(['l1', n4])
+  n3.addLink(['l2', n5])
+  n4.addLink(['l2', n3])
+  n5.addLink(['l1', n4])
+
+  const q1 = n5.query(['l1', 'l2', 'l1'])
+  t.deepEqual(
+    q1.map(node => node.getLabel()),
+    ['n2', 'n4'],
+    'bigger query returns correct result'
+  )
+  const q2 = n5.query(['l1', 'l2', 'l1'])
+  t.equal(q1, q2, 'query remembered');
+
+  n2.setLabel('n2_')
+  t.equal(q1[0].getLabel(), 'n2', 'query holds value')
+
+  const q3 = n5.query(['l1', 'l2', 'l1'])
+  t.notEqual(q2, q3, 'query on new graph is different')
+  t.equal(q3[0].getLabel(), 'n2_', 'query on new graph is correct')
 
   t.end()
 })
