@@ -1,6 +1,6 @@
 const test = require('tape')
 
-const { cNode, mem, iArray, flatMap } = require('./graf.js')
+const { cNode, mem, iArray, flatMap, node } = require('./graf.js')
 
 test('momoizer', t => {
   const inObj = mem(str => ({ [str]: str }))
@@ -100,5 +100,11 @@ test('chaining queries', t => {
     'seems good'
   );
 
+  t.end()
+})
+
+test('node', t => {
+  const n = node('n');
+  t.equal(n.getLabel(), 'n', 'seems to work')
   t.end()
 })

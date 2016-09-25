@@ -80,22 +80,23 @@ const cNode = (label, links = []) => {
 
 const node = (label, links) => {
   let cNode_ = cNode(label, links)
-  return Object.keys(cNode).reduce((node, key) => {
-    node[k] = (...args) => {
-      const res = cNode[key](...args);
+  return Object.keys(cNode_).reduce((node, key) => {
+    node[key] = (...args) => {
+      const res = cNode_[key](...args);
       if (res.isCNode) {
-        cNode = res
+        cNode_ = res
         return node
       }
       return res
     }
     return node
-  })
+  }, {})
 }
 
 module.exports = {
   iArray,
   flatMap,
   mem,
-  cNode
+  cNode,
+  node
 }
