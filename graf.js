@@ -47,6 +47,7 @@ const cNode = (label, links = []) => {
   const linkMap = buildLinkMap(links)
   const cache = new Map()
   const self = {
+    isCNode: true,
     addLink: link => cNode(label, [...links, link]),
     setLabel: label => cNode(label, links),
     getLabel: () => label,
@@ -81,8 +82,12 @@ const node = (label, links) => {
   let cNode_ = cNode(label, links)
   return Object.keys(cNode).reduce((node, key) => {
     node[k] = (...args) => {
-      cNode_ = cNode[key](...args)
-      return node
+      const res = cNode[key](...args);
+      if (res.isCNode) {
+        cNode = res
+        return node
+      }
+      return res
     }
     return node
   })
