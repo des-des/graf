@@ -18,6 +18,8 @@ test('iArray', t => {
   t.equal(iArray([]).length, 0, 'empty iArray has zero length')
   const three = iArray([1, 2, 3])
 
+  console.log(three)
+
   t.equal(three.length, 3, 'length set correctly for longer array')
   t.equal(three[1], 2, 'getter works as expected')
 

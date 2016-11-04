@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "cover": "./node_modules/.bin/istanbul cover graf.test.js",
+    "cover": "./node_modules/.bin/istanbul cover test_runner.js",
     "check-coverage": "./node_modules/.bin/istanbul check-coverage",
     "test": "standard && npm run cover && npm run check-coverage",
-    "test-only": "node graf.test.js | tap-notify | tap-spec",
-    "test:dev": "nodemon -q -w graf.js -w graf.test.js -x \"npm run test-only\""
+    "test-only": "node test_runner.js | tap-notify | tap-spec",
+    "test:dev": "nodemon -q -x \"npm run test-only\""
   },
   "keywords": [],
   "author": "",
