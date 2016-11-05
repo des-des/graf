@@ -47,3 +47,12 @@ test('list.get', t => {
   )
   t.end()
 })
+
+test('list.cons', t => {
+  const inner = list(1, 2)
+  const outer = inner.cons(0)
+
+  t.equal(outer.head, 0, 'cons elem at head')
+  t.equal(outer.tail, inner, 'new list holds old list')
+  t.end()
+})
