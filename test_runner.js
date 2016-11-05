@@ -1,6 +1,6 @@
 const toTest = [
-  'list'
-  // 'graf'
+  'list',
+  'map'
 ]
 
 toTest.forEach(name => {
