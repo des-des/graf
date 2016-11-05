@@ -11,16 +11,8 @@ test('empty list', t => {
   const emptyList = list()
 
   t.equal(typeof emptyList, 'object', 'creates a list')
-  t.throws(
-    () => { emptyList.head() },
-    /Cannot call head on an empty list/,
-    'calling head on empty list throws'
-  )
-
-  t.throws(
-    () => { emptyList.tail() },
-    /Cannot call tail on an empty list/,
-    'calling tail on empty list throws'
-  )
+  t.equal(emptyList.length, 0, 'has length 0')
+  t.equal(typeof emptyList.head, 'undefined', 'has undefined head')
+  t.equal(typeof emptyList.tail, 'undefined', 'has undefined tail')
   t.end()
 })
