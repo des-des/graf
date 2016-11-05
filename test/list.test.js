@@ -33,3 +33,17 @@ test('list with many elems', t => {
   t.equal(l.tail.tail.head, 2, 'can get nested elems')
   t.end()
 })
+
+test('list.get', t => {
+  const l = list(0, 1)
+
+  t.equal(l.get(1), 1, 'can get elem')
+  t.equal(l.get(1), 1, 'can get elem')
+  t.equal(l.get(-5), undefined, 'negitive index returns undefined')
+  t.equal(
+    l.get(2),
+    undefined,
+    'prositive index out of bounds returns undefined'
+  )
+  t.end()
+})

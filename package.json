@@ -6,7 +6,7 @@
   "scripts": {
     "cover": "./node_modules/.bin/istanbul cover test_runner.js",
     "check-coverage": "./node_modules/.bin/istanbul check-coverage",
-    "test": "standard && npm run cover && npm run check-coverage",
+    "test": "standard --fix && npm run cover && npm run check-coverage",
     "test-only": "node test_runner.js | tap-notify | tap-spec",
     "test:dev": "nodemon -q -x \"npm run test-only\""
   },
