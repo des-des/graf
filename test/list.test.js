@@ -56,3 +56,10 @@ test('list.cons', t => {
   t.equal(outer.tail, inner, 'new list holds old list')
   t.end()
 })
+//
+// test('list.concat', t => {
+//   const l = list(0, 1).concat(list(3, 4))
+//
+//   t.equal(l.get(3), 4, 'can access last element')
+//   t.end()
+// })
