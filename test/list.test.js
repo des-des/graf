@@ -70,3 +70,10 @@ test('list.map', t => {
   t.equal(l.tail.head, 4, 'tail set correctly')
   t.end()
 })
+
+test('list.fromArray', t => {
+  const l = list.fromArray([0, 1]);
+  t.equal(l.head, 0, 'head set correctly')
+  t.equal(l.tail.head, 1, 'tail set correctly')
+  t.end()
+})
