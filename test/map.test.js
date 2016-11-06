@@ -38,3 +38,10 @@ test('map.setIn', t => {
   t.equal(m1.get('k1').get('k2'), 'v2', 'value set successfully')
   t.end()
 })
+
+test('map.mapValues', t => {
+  const m = map({k: 0}).mapValues(v => v + 1)
+
+  t.equal(m.get('k'), 1, 'map success')
+  t.end()
+})
