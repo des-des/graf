@@ -19,3 +19,22 @@ test('map.set', t => {
   t.equal(m2.get('k2'), 'v2', 'new map correctly set')
   t.end()
 })
+
+test('map.update', t => {
+  const m1 = map({ k1: 1 })
+
+  t.equal(
+    m1.update('k1', v1 => v1 + 1).get('k1'),
+    2,
+    'value updated successfully'
+  )
+  t.end()
+})
+
+test('map.setIn', t => {
+  const m1 = map({ k1: map({ k2: 'v1' }) })
+    .setIn(['k1', 'k2'], 'v2')
+
+  t.equal(m1.get('k1').get('k2'), 'v2', 'value set successfully')
+  t.end()
+})
