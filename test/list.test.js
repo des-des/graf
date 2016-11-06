@@ -63,3 +63,10 @@ test('list.concat', t => {
   t.equal(l.get(3), 4, 'can access last element')
   t.end()
 })
+
+test('list.map', t => {
+  const l = list(1, 2).map(x => x * 2)
+  t.equal(l.head, 2, 'head set correctly')
+  t.equal(l.tail.head, 4, 'tail set correctly')
+  t.end()
+})
