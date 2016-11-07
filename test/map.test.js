@@ -45,3 +45,22 @@ test('map.mapValues', t => {
   t.equal(m.get('k'), 1, 'map success')
   t.end()
 })
+
+test('map.toObject', t => {
+  const o = {k: 'v'}
+
+  t.deepEqual(o, map(o).toObject(), 'comes out in the same shape')
+  t.notEqual(o, map(o).toObject(), 'but different reference')
+  t.end()
+})
+
+test('map.toPairs', t => {
+  const pairs = map({k: 'v'}).toPairs()
+  const first = pairs.head
+  t.equal(first.head, 'k', 'first pair starts with key')
+  t.equal(first.get(1), 'v', 'then has value')
+  t.equal(first.length, 2, 'first has length 2')
+
+  t.equal(pairs.length, 1, 'only one pair')
+  t.end()
+})
