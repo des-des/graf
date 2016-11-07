@@ -72,8 +72,15 @@ test('list.map', t => {
 })
 
 test('list.fromArray', t => {
-  const l = list.fromArray([0, 1]);
+  const l = list.fromArray([0, 1])
   t.equal(l.head, 0, 'head set correctly')
   t.equal(l.tail.head, 1, 'tail set correctly')
+  t.end()
+})
+
+test('list.reduce', t => {
+  const n = list(0, 1, 2).reduce((x, y) => x + y, 0)
+
+  t.equal(n, 3, 'adds some numbers')
   t.end()
 })
