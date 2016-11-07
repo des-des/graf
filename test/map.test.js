@@ -54,6 +54,13 @@ test('map.toObject', t => {
   t.end()
 })
 
+test('empty map', t => {
+  const m = map()
+
+  t.deepEqual(m.toObject(), {}, 'no problem')
+  t.end()
+})
+
 test('map.toPairs', t => {
   const pairs = map({k: 'v'}).toPairs()
   const first = pairs.head
