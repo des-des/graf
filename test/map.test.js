@@ -1,6 +1,7 @@
 const test = require('tape')
 
 const map = require('../lib/map.js')
+const list = require('../lib/list.js')
 
 test('map.get', t => {
   const m = map({ k1: 'v1', k2: 'k2' })
@@ -69,5 +70,13 @@ test('map.toPairs', t => {
   t.equal(first.length, 2, 'first has length 2')
 
   t.equal(pairs.length, 1, 'only one pair')
+  t.end()
+})
+
+test('map.fromPairs', t => {
+  const m = map.fromPairs(list(list('k', 'v')))
+
+  t.equal(m.get('k'), 'v', 'getter returns correctly')
+
   t.end()
 })
