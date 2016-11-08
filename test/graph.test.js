@@ -1,30 +1,81 @@
 const test = require('tape')
 
-const node_ = require('../lib/graph.js')
+const node = require('../lib/graph.js')
 const map = require('../lib/map.js')
-// const list = require('../lib/list.js')
 
-const node = (data, updateNumber = 0, linksTo = {}, linksFrom = {}) =>
-  node_(map({
-    data: map(data),
-    linksTo: map(linksTo),
-    linksFrom: map(linksFrom),
-    updateNumber
-  }))
+const mockGraph = () => {
+  let updateNum = 0
+  let nodeCount = 0
+  const incUpdateNum = () => {
+    updateNum += 1
+    return mockGraph
+  }
 
-test('try and make a graph', t => {
-  const n1 = node({ name: 'n1' })
-  const n2 = node(
-    {name: 'n2'},
-    0,
-    { 'link': n1 }
+  const getUpdateNum = () => updateNum
+  const nodes = {}
+  const createNode = dataObj => {
+    const id = nodeCount
+    nodeCount += 1
+
+    const newNode = node(map({
+      updateNumber: 0,
+      data: map(dataObj),
+      linksTo: map(),
+      linksFrom: map(),
+      getGraphUpdateNumber: getUpdateNum,
+      onNewRef: ref => {
+        nodes[id] = ref
+      }
+    }))
+    nodes[id] = newNode
+
+    return newNode
+  }
+
+  return {
+    nodes,
+    createNode,
+    incUpdateNum
+  }
+}
+
+test('mutable with cycles', t => {
+  const g = mockGraph()
+  const n0 = g.createNode({ name: 'n0' })
+  const n1 = g.createNode({ name: 'n1' })
+  n0.setLink('tag', n1)
+  n1.setLink('tag', n0)
+
+  t.equal(n0.getLink('tag'), n1)
+  t.equal(n1.getLink('tag'), n0)
+
+  t.end()
+})
+
+test('immutable', t => {
+  const g = mockGraph()
+  const n0 = g.createNode({ name: 'n0' })
+  const n1 = g.createNode({ name: 'n1' })
+  g.incUpdateNum()
+  const n0_ = n0.setLink('tag', n1)
+
+  t.equal(n0.getLink('tag'), undefined, 'original node unchaged')
+  t.equal(
+    n0_.getLink('tag'),
+    n1,
+    'new node has update, holds old unchanged node'
   )
+  t.equal(g.nodes[0], n0_, 'node called onNewRef successfully')
 
-  const n2_ = n2.set('name', 'n2_')
-  const n2__ = n2_.set('name', 'n2__')
+  g.incUpdateNum()
+  g.nodes[1].set('name', 'n1!')
 
-  t.notEqual(n2, n2_, 'new node is created')
-  t.equal(n2_, n2__, 'another update fails to create a new node, (BROKEN)')
+  t.equal(g.nodes[1].get('name'), 'n1!', 'name updated and we can get it')
+  t.equal(
+    g.nodes[0].getLink('tag').get('name'),
+    'n1!',
+    'graph holds update node'
+  )
 
   t.end()
 })
